@@ -2,8 +2,10 @@
 
 namespace App\Repositories;
 
+use App\Exceptions\UnauthorizedDefaultCategoryException;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -18,10 +20,26 @@ class CategoryRepository implements RepositoryInterface
     {
         try {
             return DB::transaction(function () use ($request) {
-                $input = $request->only(['', '', '', '']);
+                $input = $request->only(['info', 'type', 'icon', 'color', 'parent_id']);
+                $user = Auth::user();
+
+                if (!$request->get('default')) {
+                    $input['user_id'] = $user->id;
+                    $input['default'] = 0;
+                } else {
+                    if (!$user->can('createDefaultCategory'))
+                        throw new UnauthorizedDefaultCategoryException();
+                    $input['default'] = 1;
+                }
+
+                $category = Category::create($input);
+
+                Log::info('Category ' . $category->id . ' successfully created.');
+                return response()->json(["success" => true, "message" => '']);
             });
         } catch (\Exception $e) {
             Log::error($e);
+            return response()->json(['error' => true, "message" => $e->getMessage()], $e->getCode());
         }
     }
 

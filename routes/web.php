@@ -13,6 +13,8 @@ Route::group(
     }
 );
 
+Route::resource('categories', \App\Http\Controllers\CategoryController::class);
+
 Route::group([
     'as' => 'api.',
     'prefix' => 'api/',
