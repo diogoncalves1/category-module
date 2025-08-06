@@ -24,8 +24,17 @@ class Category extends Model
         return $this->belongsTo(Category::class, 'parent_id');
     }
 
-    public function scopeDefault($query)
+    public function scopeDefault($query, $default)
     {
-        return $query->where('default', 1);
+        return $query->where('default', $default);
+    }
+
+    public function scoprUserId($query, $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
+    public function getTranslatedName($lang)
+    {
+        return data_get($this->info, "$lang.name");
     }
 }
