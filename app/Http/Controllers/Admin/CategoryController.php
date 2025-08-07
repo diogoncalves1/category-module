@@ -2,64 +2,45 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Controllers\AppController;
+use App\Repositories\CategoryRepository;
+use Illuminate\Support\Facades\Session;
 
-class CategoryController extends Controller
+class CategoryController extends AppController
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private CategoryRepository $categoryRepository;
+
+
+    public function __construct(CategoryRepository $categoryRepository)
+    {
+        $this->categoryRepository = $categoryRepository;
+    }
     public function index()
     {
-        //
+        // $this->allowedAction('viewCategories');
+
+        Session::flash('page', 'categories');
+
+        return view('admin.categories.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        // $this->allowedAction('addCategory');
+
+        Session::flash('page', 'categories');
+
+        return view('admin.categories.form');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        //
-    }
+        // $this->allowedAction('editCategory');
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        Session::flash('page', 'categories');
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $category = $this->categoryRepository->show($id);
+
+        return view('admin.categories.form', compact('category'));
     }
 }
