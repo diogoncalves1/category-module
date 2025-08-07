@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\AppController;
-use App\Http\Controllers\Controller;
 use App\Repositories\CategoryRepository;
 use Illuminate\Http\Request;
 
@@ -18,16 +17,22 @@ class CategoryController extends AppController
 
     public function store(Request $request)
     {
-        //
+        $response = $this->categoryRepository->store($request);
+
+        return $response;
     }
     public function update(Request $request, string $id)
     {
-        //
+        $response = $this->categoryRepository->update($request, $id);
+
+        return $response;
     }
 
     public function destroy(string $id)
     {
-        //
+        $response = $this->categoryRepository->destroy($id);
+
+        return $response;
     }
 
     public function dataTable(Request $request)
