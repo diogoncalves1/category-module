@@ -11,7 +11,7 @@ class CategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class CategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'type' => 'required|string|in:revenue,expense',
+            'icon' => 'required|string|max:255',
+            'parent_id' => 'nullable|exists:categories,id',
+            'user_id' => 'nullable|exists:users,id',
+            'default' => 'nullable|boolean',
         ];
     }
 }

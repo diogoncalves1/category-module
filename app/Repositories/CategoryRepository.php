@@ -58,7 +58,7 @@ class CategoryRepository implements RepositoryInterface
 
                 $category->update($input);
 
-                return response()->json(['success' => true, 'message' => __('')]);
+                return response()->json(['success' => true, 'message' => __('frontend.')]);
             });
         } catch (\Exception $e) {
             Log::error($e);
@@ -92,6 +92,7 @@ class CategoryRepository implements RepositoryInterface
 
     public function dataTable(Request $request)
     {
+
         $query = Category::with('parent');
         $user = Auth::user();
         $userLang = /* $_COOKIE['lang'] ?? */ 'en';
@@ -125,7 +126,6 @@ class CategoryRepository implements RepositoryInterface
         $total = $query->count();
 
         foreach ($categories as &$category) {
-
             $category->name = ($category->default) ?
                 optional(json_decode($category->info))->{$userLang}->name : optional(json_decode($category->info))->name;
 

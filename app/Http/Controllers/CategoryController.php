@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Repositories\CategoryRepository;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
 class CategoryController extends Controller
@@ -25,11 +23,17 @@ class CategoryController extends Controller
 
     public function create()
     {
-        //
+        Session::flash('page', 'categories');
+
+        return view('frontend.categories.form');
     }
 
     public function edit(string $id)
     {
-        //
+        Session::flash('page', 'categories');
+
+        $category = $this->categoryRepository->show($id);
+
+        return view('frontend.categories.form', compact('category'));
     }
 }

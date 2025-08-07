@@ -9,7 +9,7 @@ Route::group(
         'middleware' => 'auth'
     ],
     function () {
-        Route::resource('categories', \App\Http\Controllers\CategoryController::class);
+        Route::resource('categories', \App\Http\Controllers\CategoryController::class, ['except' => ['update', 'show', 'destroy', 'store']]);
     }
 );
 

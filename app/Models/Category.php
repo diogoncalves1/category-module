@@ -18,7 +18,6 @@ class Category extends Model
     {
         return $this->belongsTo(User::class);
     }
-
     public function parent()
     {
         return $this->belongsTo(Category::class, 'parent_id');
@@ -28,13 +27,8 @@ class Category extends Model
     {
         return $query->where('default', $default);
     }
-
-    public function scoprUserId($query, $userId)
+    public function scopeUserId($query, $userId)
     {
         return $query->where('user_id', $userId);
-    }
-    public function getTranslatedName($lang)
-    {
-        return data_get($this->info, "$lang.name");
     }
 }
