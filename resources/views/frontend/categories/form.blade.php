@@ -1,11 +1,11 @@
 @extends('layouts.frontend')
 
-@section('title', 'Adicionar Utilizador ')
+@section('title', 'Adicionar Categoria')
 
 @section('breadcrumb')
-<li class="breadcrumb-item active"><a class="text-white" href="{{ route('admin.users.index') }}">Utilizadores</a>
+<li class="breadcrumb-item active"><a class="text-white" href="{{ route('categories.index') }}">Categorias</a>
 </li>
-<li class="breadcrumb-item active">{{ isset($user) ? 'Editar' : 'Adicionar' }}</li>
+<li class="breadcrumb-item active">{{ isset($category) ? 'Editar' : 'Adicionar' }}</li>
 @endsection
 
 @section('css')
@@ -14,14 +14,11 @@
 
 @section('content')
 <section class="content">
-    <form action="{{ isset($user) ? route('admin.users.update', $user->id) : route('admin.users.store')  }}"
+    <form action="{{ isset($category) ? route('api.categories.update', $category->id) : route('api.categories.store')  }}"
         method="POST">
         @csrf
-        @if(isset($user))
-        @method('PUT')
-        <input hidden name="user_id" value="{{ $user->id }}" type="text">
-        @else
-        @method('POST')
+        @if(isset($category))
+        <input hidden name="category_id" value="{{ $category->id }}" type="text">
         @endif
         <div class="row">
             <div class="col-12">
@@ -30,56 +27,35 @@
                         <h3 class="card-title">Geral</h3>
                     </div>
                     <div class="card-body">
-                        <div class="form-group">
-                            <label for="inputCode">Nome <span class="text-danger">*</span></label>
-                            <input type="text" name="name" value='{{ $user->name ?? "" }}' class="validate form-control"
-                                required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputDisplayName">Email <span class="text-danger">*</span></label>
-                            <input type="email" name="email" value='{{ $user->email ?? "" }}'
-                                class="validate form-control" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputDisplayName">Password
-                                <span class="text-danger"> {{ isset($user) ? '' : '*'}}</span> </label>
-                            <input type="password" name="password" minlength="8" class="validate form-control"
-                                {{ isset($user) ? '' : 'required' }}>
-                        </div>
-
-                        <h3><b>Papeis</b> <span class="text-danger">*</span></h3>
-                        @foreach($roles as $index => $role)
-                        @if ($index % 4 == 0)
                         <div class="row">
-                            @endif
-                            <div class="col-3">
-                                <div class="form-group clearfix">
-                                    <div class="icheck-success d-inline ">
-                                        <input class="form-control" type="checkbox" name="roles[]"
-                                            value="{{ $role->id }}"
-                                            {{ isset($userRolesIds) && in_array($role->id, $userRolesIds) ? 'checked' : '' }}>
-                                        <label><?= $role->name ?></label>
-                                    </div>
-                                </div>
+                            <div class="form-group col-md-6">
+                                <label>Nome <span class="text-danger">*</span></label>
+                                <input type="text" name="name" value='{{ $category->name ?? "" }}' class="validate form-control" required>
                             </div>
-                            @if (($index + 1) % 4 == 0)
+
+                            <div class="form-group col-md-6">
+                                <label>Tipo <span class="text-danger">*</span></label>
+                                <select name="type" value='{{ $category->type ?? "" }}' class="select2 validate form-control" required>
+                                    <option value="revenue">{{ __('frontend.revenue') }}</option>
+                                    <option value="expense">{{ __('frontend.expense') }}</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-12">
+                                <label>Categoria Pai</label>
+                                <select name="parent_id" value='{{ $category->parent_id ?? "" }}' class="select2 form-control">
+                                </select>
+                            </div>
                         </div>
-                        @endif
-                        @endforeach
-                        @if (($index + 1) % 4 != 0)
                     </div>
-                    @endif
                 </div>
             </div>
         </div>
-        </div>
         <div class="row">
             <div class="col-12 ">
-                <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">Voltar</a>
-                <button type="submit" class="btn btn-success float-right">{{ isset($user) ? 'Editar' : 'Adicionar' }}
-                    Utilizador</button>
+                <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">Voltar</a>
+                <button type="submit" class="btn btn-success float-right">{{ isset($category) ? 'Editar' : 'Adicionar' }}
+                    Categoria</button>
             </div>
         </div>
     </form>

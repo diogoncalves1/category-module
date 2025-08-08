@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('info', 255);
+            $table->string('name', 255);
             $table->enum('type', ['revenue', 'expense']);
             $table->string('icon', 255);
             $table->string('color', 255);

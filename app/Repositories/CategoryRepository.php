@@ -94,7 +94,7 @@ class CategoryRepository implements RepositoryInterface
     {
 
         $query = Category::with('parent');
-        $user = Auth::user();
+        // $user = Auth::user();
         $userLang = /* $_COOKIE['lang'] ?? */ 'en';
 
         if ($search = $request->input('search.value')) {
@@ -107,15 +107,13 @@ class CategoryRepository implements RepositoryInterface
         $orderColumnIndex = $request->input('order.0.column');
         $orderColumn = $request->input("columns.$orderColumnIndex.data");
         $orderDir = $request->input('order.0.dir');
-        if ($orderColumn && $orderDir) {
+
+        if ($orderColumn && $orderDir)
             $query->orderBy($orderColumn, $orderDir);
+
+        if (!$request->get('default')) {
+            // $query->userId($user->id);
         }
-
-
-        if (!$request->get('default') && $user) {
-            $query->userId($user->id);
-        }
-
 
         $categories = $query->offset($request->start)
             ->limit($request->length)
