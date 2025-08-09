@@ -25,7 +25,9 @@ class CategoryController extends Controller
     {
         Session::flash('page', 'categories');
 
-        return view('frontend.categories.form');
+        $categories = $this->categoryRepository->allUser();
+
+        return view('frontend.categories.form', compact('categories'));
     }
 
     public function edit(string $id)
@@ -34,6 +36,8 @@ class CategoryController extends Controller
 
         $category = $this->categoryRepository->show($id);
 
-        return view('frontend.categories.form', compact('category'));
+        $categories = $this->categoryRepository->allUser();
+
+        return view('frontend.categories.form', compact('category', 'categories'));
     }
 }
