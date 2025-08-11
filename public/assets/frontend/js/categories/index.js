@@ -40,25 +40,3 @@ $(function () {
         ],
     });
 });
-
-const updateRates = document.getElementById("updateRates");
-
-updateRates.addEventListener("click", tryUpdateRates);
-
-async function tryUpdateRates() {
-    var url = "/api/currencies/update-rates";
-
-    $.ajax({
-        url: url,
-        type: "GET",
-        success: function (response) {
-            successToast(response.message);
-            $("#table").DataTable().ajax.reload();
-        },
-        error: function (error) {
-            console.log(error);
-
-            errorToast(error.responseJSON.message);
-        },
-    });
-}
