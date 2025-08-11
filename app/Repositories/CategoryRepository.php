@@ -20,6 +20,19 @@ class CategoryRepository implements RepositoryInterface
         return Category::all();
     }
 
+    public function allAdmin()
+    {
+        $categories =  Category::default(1)
+            ->get();
+
+        $userLang = /* $_COOKIE['lang'] ?? */ 'en';
+
+        foreach ($categories as &$category) {
+            $category->name = json_decode($category->name)->{$userLang}  ?? json_decode($category->name);
+        }
+
+        return $categories;
+    }
     public function allUser()
     {
         $categories =  Category::default(1)
@@ -47,8 +60,8 @@ class CategoryRepository implements RepositoryInterface
                     // $input['user_id'] = $user->id;
                     $input['default'] = 0;
                 } else {
-                    if (!$user || !$user->can('createDefaultCategory'))
-                        throw new UnauthorizedDefaultCategoryException();
+                    // if (!$user || !$user->can('createDefaultCategory'))
+                    //     throw new UnauthorizedDefaultCategoryException();
                     $input['default'] = 1;
                 }
 
@@ -80,8 +93,8 @@ class CategoryRepository implements RepositoryInterface
                 // if (!$user || !$category->default  && $category->user_id != $user->id)
                 // throw new CannotUpdateOthersCategoryException();
 
-                if ($category->default && !$user->can('updateDefaultCategory'))
-                    throw new CannotUpdateDefaultCategoryException();
+                // if ($category->default && !$user->can('updateDefaultCategory'))
+                //     throw new CannotUpdateDefaultCategoryException();
 
                 $category->update($input);
 
@@ -153,14 +166,16 @@ class CategoryRepository implements RepositoryInterface
         $categories = $query->offset($request->start)
             ->limit($request->length)
             ->default($request->get('default'))
-            ->select("id", 'name', 'parent_id', "type", 'icon', 'color')
+            ->select("id", 'name', 'parent_id', "type", 'icon', 'color', 'default')
             ->get();
 
         $total = $query->count();
 
         foreach ($categories as &$category) {
-            $category->name = ($category->default) ?
+            $category->name = $category->default == 1 ?
                 json_decode($category->name)->{$userLang} : json_decode($category->name);
+
+            $editRoute = $category->default ? route('admin.categories.edit', $category->id) : route('categories.edit', $category->id);
 
             if ($category->parent)
                 $category->parentName = (optional($category->parent)->default) ?
@@ -170,7 +185,7 @@ class CategoryRepository implements RepositoryInterface
 
             $category->type = __("frontend." . $category->type);
             $category->actions = "<div class='btn-group'>
-                                    <a type='button' href='" . route('categories.edit', $category->id) . "' class='btn mr-1 btn-default'>
+                                    <a type='button' href='" . $editRoute . "' class='btn mr-1 btn-default'>
                                         <i class='fas fa-edit'></i>
                                     </a>
                                     <button type='button' onclick='modalDelete(`" . route('api.categories.destroy', $category->id) . "`)' class='btn btn-default'>

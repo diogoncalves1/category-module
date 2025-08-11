@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\Language;
 use App\Http\Controllers\AppController;
 use App\Repositories\CategoryRepository;
 use Illuminate\Support\Facades\Session;
@@ -30,7 +31,11 @@ class CategoryController extends AppController
 
         Session::flash('page', 'categories');
 
-        return view('admin.categories.form');
+        $categories = $this->categoryRepository->allAdmin();
+
+        $languages = Language::cases();
+
+        return view('admin.categories.form', compact('categories', 'languages'));
     }
 
     public function edit(string $id)
@@ -41,6 +46,10 @@ class CategoryController extends AppController
 
         $category = $this->categoryRepository->show($id);
 
-        return view('admin.categories.form', compact('category'));
+        $categories = $this->categoryRepository->allAdmin();
+
+        $languages = Language::cases();
+
+        return view('admin.categories.form', compact('category', 'categories', 'languages'));
     }
 }

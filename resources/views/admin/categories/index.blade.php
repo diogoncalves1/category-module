@@ -20,8 +20,9 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <a href="{{ route('categories.create') }}" class="btn btn-default">Adicionar
-                            Categoria</a>
+                        <a href="{{ route('admin.categories.create') }}" class="btn btn-default">
+                            Adicionar Categoria
+                        </a>
                     </div>
                     <div class="card-body">
                         <table id="table" class="table table-bordered table-striped ">
@@ -45,7 +46,7 @@
 @endsection
 
 @section('script')
-<script src="../assets/frontend/js/categories/index.js"></script>
+<script src="../assets/admin/js/categories/index.js"></script>
 <script src="../assets/js/allIndex.js"></script>
 
 <script src="/admin-lte/plugins/datatables/jquery.dataTables.min.js"></script>

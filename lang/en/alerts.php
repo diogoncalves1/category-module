@@ -1,9 +1,14 @@
 <?php
 return [
-    'accountDeleted' => 'Account deleted successfully!',
-    'errorDeleteAccount' => 'Error trying to delete account.',
-    'accountAdded' => 'Account added successfully!',
-    'errorAddAccount' => 'Error trying to add account.',
-    'accountUpdated' => 'Account updated successfully!',
-    'errorUpdateAccount' => 'Error trying to update account.',
+    'categoryDeleted' => 'Category deleted successfully!',
+    'errorDeleteCategory' => 'Error trying to delete category.',
+    'categoryAdded' => 'Category added successfully!',
+    'errorAddCategory' => 'Error trying to add category.',
+    'categoryUpdated' => 'Category updated successfully!',
+    'errorUpdateCategory' => 'Error trying to update category.',
+    'unauthorizedDefaultCategoryException' => 'You do not have permission to create a default category.',
+    'cannotDeleteDefaultCategoryException' => 'You do not have permissions to delete a default category.',
+    'cannotDeleteOthersCategoryException' => "You do not have permission to delete another user's category.",
+    'cannotUpdateOthersCategoryException' => "You do not have permission to update other user's categories.",
+    'cannotUpdateDefaultCategoryException' => 'You do not have permissions to update default categories.'
 ];

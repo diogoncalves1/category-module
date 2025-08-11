@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 255);
+            $table->json('name');
             $table->enum('type', ['revenue', 'expense']);
-            $table->string('icon', 255);
-            $table->string('color', 255);
+            $table->string('icon', 255)->nullable();
+            $table->string('color', 255)->nullable();
             $table->boolean('default')->default(0);
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();

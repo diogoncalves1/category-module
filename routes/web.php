@@ -6,10 +6,10 @@ Route::group(
     [
         'as' => 'admin.',
         'prefix' => 'admin/',
-        'middleware' => 'auth'
+        // 'middleware' => 'auth'
     ],
     function () {
-        Route::resource('categories', \App\Http\Controllers\CategoryController::class, ['except' => ['update', 'show', 'destroy', 'store']]);
+        Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class, ['except' => ['update', 'show', 'destroy', 'store']]);
     }
 );
 
@@ -24,6 +24,7 @@ Route::group([
         'as' => 'categories.',
         'prefix' => 'categories/'
     ], function () {
+        Route::get('data', [\App\Http\Controllers\Api\CategoryController::class, 'dataTable']);
         Route::get('data-user', [\App\Http\Controllers\Api\CategoryController::class, 'dataTableUser']);
     });
     Route::resource('categories', \App\Http\Controllers\Api\CategoryController::class, ['except' => ['show', 'index', 'edit', 'create']]);
