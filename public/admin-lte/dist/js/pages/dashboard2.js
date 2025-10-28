@@ -1,7 +1,7 @@
 /* global Chart:false */
 
-$(function () {
-  'use strict'
+$(async function () {
+  "use strict";
 
   /* ChartJS
    * -------
@@ -13,122 +13,165 @@ $(function () {
   //-----------------------
 
   // Get context with jQuery - using jQuery's .get() method.
-  var salesChartCanvas = $('#salesChart').get(0).getContext('2d')
+  var salesChartCanvas = $("#salesChart").get(0).getContext("2d");
+
+  var monthsLabel = [];
+
+  const currentDate = new Date();
+  var currentMonth = currentDate.getUTCMonth();
+
+  for (var i = 0; i <= currentMonth; i++) {
+    monthsLabel.push(MONTHS[i]);
+  }
+  var revenues = [];
+  var expenses = [];
+
+  function getMonthyRecapData() {
+    return $.ajax({
+      url: "/api/monthly-recap/data?min_date=2025-01-01",
+      type: "GET",
+      success: function (response) {
+        var responseData = response.data;
+        responseData.forEach((date) => {
+          var month = parseInt(date.month.replace("2025-", ""));
+          expenses[month - 1] = parseFloat(date.expenses);
+          revenues[month - 1] = parseFloat(date.revenues);
+        });
+      },
+      error: function (error) {},
+    });
+  }
+
+  function fillEmpty() {
+    for (var i = 0; i <= currentMonth; i++) {
+      if (expenses[i] == null) {
+        expenses[i] = 0;
+        revenues[i] = 0;
+      }
+    }
+    return 0;
+  }
+
+  await getMonthyRecapData();
+  await fillEmpty();
+
+  console.log(revenues);
 
   var salesChartData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    labels: monthsLabel,
     datasets: [
       {
-        label: 'Digital Goods',
-        backgroundColor: 'rgba(60,141,188,0.9)',
-        borderColor: 'rgba(60,141,188,0.8)',
+        label: "Receitas",
+        backgroundColor: "rgba(29, 152, 25, 0.9)",
+        borderColor: "rgba(62, 188, 60, 0.8)",
         pointRadius: false,
-        pointColor: '#3b8bba',
-        pointStrokeColor: 'rgba(60,141,188,1)',
-        pointHighlightFill: '#fff',
-        pointHighlightStroke: 'rgba(60,141,188,1)',
-        data: [28, 48, 40, 19, 86, 27, 90]
+        pointColor: "#3b8bba",
+        pointStrokeColor: "rgba(60,141,188,1)",
+        pointHighlightFill: "#fff",
+        pointHighlightStroke: "rgba(60,141,188,1)",
+        data: revenues,
       },
       {
-        label: 'Electronics',
-        backgroundColor: 'rgba(210, 214, 222, 1)',
-        borderColor: 'rgba(210, 214, 222, 1)',
+        label: "Despesas",
+        backgroundColor: "rgb(203, 60, 60)",
+        borderColor: "rgba(202, 8, 8, 0.83)",
         pointRadius: false,
-        pointColor: 'rgba(210, 214, 222, 1)',
-        pointStrokeColor: '#c1c7d1',
-        pointHighlightFill: '#fff',
-        pointHighlightStroke: 'rgba(220,220,220,1)',
-        data: [65, 59, 80, 81, 56, 55, 40]
-      }
-    ]
-  }
+        pointColor: "rgba(210, 214, 222, 1)",
+        pointStrokeColor: "#c1c7d1",
+        pointHighlightFill: "#fff",
+        pointHighlightStroke: "rgba(220,220,220,1)",
+        data: expenses,
+      },
+    ],
+  };
 
   var salesChartOptions = {
     maintainAspectRatio: false,
     responsive: true,
     legend: {
-      display: false
+      display: false,
     },
     scales: {
-      xAxes: [{
-        gridLines: {
-          display: false
-        }
-      }],
-      yAxes: [{
-        gridLines: {
-          display: false
-        }
-      }]
-    }
-  }
+      xAxes: [
+        {
+          gridLines: {
+            display: false,
+          },
+        },
+      ],
+      yAxes: [
+        {
+          gridLines: {
+            display: false,
+          },
+        },
+      ],
+    },
+  };
 
   // This will get the first returned node in the jQuery collection.
   // eslint-disable-next-line no-unused-vars
   var salesChart = new Chart(salesChartCanvas, {
-    type: 'line',
+    type: "line",
     data: salesChartData,
-    options: salesChartOptions
+    options: salesChartOptions,
+  });
+
+  var resumeExpenses = 0;
+  var resumeRevenues = 0;
+
+  function getResumeData() {
+    return $.ajax({
+      url: `/api/resume/data?min_date=2025-${currentDate.getUTCMonth() + 1}-01`,
+      type: "GET",
+      success: function (response) {
+        console.log(response);
+        var responseData = response.data;
+        responseData.forEach((date) => {
+          resumeExpenses = parseFloat(date.expenses);
+          resumeRevenues = parseFloat(date.revenues);
+        });
+        console.log(resumeExpenses);
+        console.log(resumeRevenues);
+      },
+      error: function (error) {},
+    });
   }
-  )
+
+  await getResumeData();
+
+  var pieChartCanvas = $("#pieChart").get(0).getContext("2d");
+  var pieData = {
+    labels: ["Despesas", "Receitas"],
+    datasets: [
+      {
+        data: [resumeExpenses, resumeRevenues],
+        backgroundColor: ["#f56954", "#00a65a"],
+      },
+    ],
+  };
+  var pieOptions = {
+    legend: {
+      display: false,
+    },
+  };
+  // Create pie or douhnut chart
+  // You can switch between pie and douhnut using the method below.
+  // eslint-disable-next-line no-unused-vars
+  var pieChart = new Chart(pieChartCanvas, {
+    type: "doughnut",
+    data: pieData,
+    options: pieOptions,
+  });
 
   //---------------------------
   // - END MONTHLY SALES CHART -
   //---------------------------
 
-  //-------------
-  // - PIE CHART -
-  //-------------
-  // Get context with jQuery - using jQuery's .get() method.
-  var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
-  var pieData = {
-    labels: [
-      'Chrome',
-      'IE',
-      'FireFox',
-      'Safari',
-      'Opera',
-      'Navigator'
-    ],
-    datasets: [
-      {
-        data: [700, 500, 400, 600, 300, 100],
-        backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de']
-      }
-    ]
-  }
-  var pieOptions = {
-    legend: {
-      display: false
-    }
-  }
-  // Create pie or douhnut chart
-  // You can switch between pie and douhnut using the method below.
-  // eslint-disable-next-line no-unused-vars
-  var pieChart = new Chart(pieChartCanvas, {
-    type: 'doughnut',
-    data: pieData,
-    options: pieOptions
-  })
-
-  //-----------------
-  // - END PIE CHART -
-  //-----------------
-
   /* jVector Maps
    * ------------
    * Create a world map with markers
    */
-  $('#world-map-markers').mapael({
-    map: {
-      name: 'usa_states',
-      zoom: {
-        enabled: true,
-        maxLevel: 10
-      }
-    }
-  })
-
   // $('#world-map-markers').vectorMap({
   //   map              : 'world_en',
   //   normalizeFunction: 'polynomial',
@@ -265,6 +308,6 @@ $(function () {
   //     }
   //   ]
   // })
-})
+});
 
 // lgtm [js/unused-local-variable]
