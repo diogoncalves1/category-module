@@ -35,12 +35,12 @@
             <img class="animation__shake" src="/assets/images/logos/logo.png" alt="Logo" height="100" width="100">
         </div>
 
-        @include('components.header')
-        @include('components.sidebar')
+        @include('components.admin.header')
+        @include('components.admin.sidebar')
         <div class="content-wrapper">
             <section class="content-header">
                 <div class="container-fluid">
-                    @include('components.notifications')
+                    @include('components.admin.notifications')
                     <div class="row mb-2">
                         <div class="col-sm-12">
                             <ol class="breadcrumb float-sm-right">
@@ -54,7 +54,7 @@
             </section>
             @yield('content')
         </div>
-        @include('components.footer')
+        @include('components.admin.footer')
 
     </div>
     <script src="/admin-lte/plugins/jquery/jquery.min.js"></script>

@@ -1,5 +1,7 @@
 {
-    "User": true,
+    "ApiResponser": true,
+    "Category": true,
     "Permission": true,
-    "Category": true
+    "User": true,
+    "UserPreferences": true
 }
