@@ -34,6 +34,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected static function newFactory()
+    {
+        return \Modules\User\Database\Factories\UserFactory::new();
+    }
+
     /**
      * Get the attributes that should be cast.
      *
