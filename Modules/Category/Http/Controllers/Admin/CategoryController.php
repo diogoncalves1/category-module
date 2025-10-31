@@ -4,52 +4,42 @@ namespace Modules\Category\Http\Controllers\Admin;
 
 use App\Http\Controllers\AppController;
 use Modules\Category\Repositories\CategoryRepository;
-use Illuminate\Support\Facades\Session;
-use Modules\Category\Enums\Language;
+use Modules\Category\DataTables\CategoryDataTable;
 
 class CategoryController extends AppController
 {
-    private CategoryRepository $categoryRepository;
-
+    private CategoryRepository $repository;
 
     public function __construct(CategoryRepository $categoryRepository)
     {
-        $this->categoryRepository = $categoryRepository;
+        $this->repository = $categoryRepository;
     }
-    public function index()
+
+    public function index(CategoryDataTable $dataTable)
     {
-        // $this->allowedAction('viewCategories');
+        $this->allowedAction('viewCategoryDefault');
 
-        Session::flash('page', 'categories');
-
-        return view('category::admin.categories.index');
+        return $dataTable->render('category::admin.index');
     }
 
     public function create()
     {
-        // $this->allowedAction('addCategory');
+        $this->allowedAction('createCategoryDefault');
 
-        Session::flash('page', 'categories');
+        $categories = $this->repository->allAdmin();
+        $languages = config('languages');
 
-        $categories = $this->categoryRepository->allAdmin();
-
-        $languages = Language::cases();
-
-        return view('category::admin.categories.form', compact('categories', 'languages'));
+        return view('category::admin.create', compact('categories', 'languages'));
     }
 
     public function edit(string $id)
     {
-        // $this->allowedAction('editCategory');
+        $this->allowedAction('editCategoryDefault');
 
-        Session::flash('page', 'categories');
+        $category = $this->repository->show($id);
+        $categories = $this->repository->allAdmin();
+        $languages = config('languages');
 
-        $category = $this->categoryRepository->show($id);
-
-        $categories = $this->categoryRepository->allAdmin();
-
-        $languages = Language::cases();
-
-        return view('category::admin.categories.form', compact('category', 'categories', 'languages'));
+        return view('category::admin.create', compact('category', 'categories', 'languages'));
     }
 }

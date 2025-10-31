@@ -1,4 +1,4 @@
-@extends('layouts.frontend')
+@extends('layouts.admin')
 
 @section('title', 'Categorias')
 
@@ -25,18 +25,7 @@
                         </a>
                     </div>
                     <div class="card-body">
-                        <table id="table" class="table table-bordered table-striped ">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Tipo</th>
-                                    <th>Categoria Pai</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                        <table id="data-table" class="table table-bordered table-striped "></table>
                     </div>
                 </div>
             </div>
@@ -46,7 +35,7 @@
 @endsection
 
 @section('script')
-<script src="../assets/admin/js/categories/index.js"></script>
+<!-- <script src="../assets/admin/js/categories/index.js"></script> -->
 <script src="../assets/js/allIndex.js"></script>
 
 <script src="/admin-lte/plugins/datatables/jquery.dataTables.min.js"></script>
@@ -55,4 +44,6 @@
 <script src="/admin-lte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
 <script src="/admin-lte/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
 <script src="/admin-lte/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+
+{{$dataTable->scripts()}}
 @endsection

@@ -1,16 +1,17 @@
 <?php
 
-namespace Modules\Category\database\factories;
+namespace Modules\Category\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\Category\Entities\Category;
 use Modules\User\Entities\User;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Category>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Modules\Category\Entities\Category>
  */
 class CategoryFactory extends Factory
 {
+    protected $model = Category::class;
     /**
      * Define the model's default state.
      *
@@ -18,16 +19,16 @@ class CategoryFactory extends Factory
      */
     public function definition(): array
     {
-        $userId = $this->faker->boolean(20) ? User::inRandomOrder()->value('id') : null;
+        $userId = $this->faker->boolean(20) ? User::pluck('id')->random() : null;
         $default = $userId ? 0 : 1;
 
         return [
-            'info' => json_encode(["en" => ["name" => $this->faker->word()]]),
+            'name' => ["en" =>  $this->faker->word()],
             'type' => $this->faker->randomElement(['revenue', 'expense']),
             'icon' => $this->faker->word(),
             'color' => $this->faker->safeColorName(),
             'default' => $default,
-            'parent_id' => Category::inRandomOrder()->value('id'),
+            'parent_id' => $this->faker->boolean(10) ? Category::pluck('id')->random('id') : null,
             'user_id' => $userId,
         ];
     }

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -25,6 +26,20 @@ return new class extends Migration
             $table->foreign('parent_id')->references('id')->on('categories')->onDelete('set null');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
+
+        $permissions = [
+            ['name' => 'Ver Categorias Predefinidas', 'code' => 'viewCategoryDefault', 'category' => 'Categorias'],
+            ['name' => 'Adicionar Categoria Predefinida', 'code' => 'createCategoryDefault', 'category' => 'Categorias'],
+            ['name' => 'Editar Categoria Predefinida', 'code' => 'editCategoryDefault', 'category' => 'Categorias'],
+            ['name' => 'Apagar Categoria Predefinida', 'code' => 'destroyCategoryDefault', 'category' => 'Categorias'],
+        ];
+
+        foreach ($permissions as $permission) {
+            $id = DB::table('permissions')->insertGetId($permission);
+            $rolePermissions[] = ['permission_id' => $id, 'role_id' => 1];
+        }
+
+        DB::table('role_permissions')->insert($rolePermissions);
     }
 
     /**
