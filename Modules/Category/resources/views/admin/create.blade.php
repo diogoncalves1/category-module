@@ -1,9 +1,9 @@
-@extends('layouts.frontend')
+@extends('layouts.admin')
 
 @section('title', (isset($category) ? 'Editar' : 'Adicionar') . ' Categoria')
 
 @section('breadcrumb')
-<li class="breadcrumb-item active"><a class="text-white" href="{{ route('categories.index') }}">Categorias</a>
+<li class="breadcrumb-item active"><a class="text-white" href="{{ route('admin.categories.index') }}">Categorias</a>
 </li>
 <li class="breadcrumb-item active">{{ isset($category) ? 'Editar' : 'Adicionar' }}</li>
 @endsection
@@ -16,12 +16,16 @@
 
 @section('content')
 <section class="content">
-    <form id="form" action="{{ isset($category) ? route('api.categories.update', $category->id) : route('api.categories.store')  }}"
+    <form action="{{ isset($category) ? route('admin.categories.update', $category->id) : route('admin.categories.store')  }}"
         method="POST">
         @csrf
         @if(isset($category))
+        @method('PUT')
         <input hidden name="category_id" value="{{ $category->id }}" type="text">
+        @else
+        @method('POST')
         @endif
+        <input type="hidden" name="default" value="1">
         <div class="row">
             <div class="col-12">
                 <div class="card card-primary">
@@ -31,17 +35,6 @@
                     <div class="card-body">
                         <div class="row">
                             <input type="hidden" name="default" value="1">
-
-                            <div class="form-group col-md-6">
-                                <label>Icone</label>
-                                <input type="text" name="icon" value='{{ isset($category) ? $category->icon : "" }}' class="form-control">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>Cor</label>
-                                <input type="text" name="color" class="form-control my-colorpicker1 colorpicker-element"
-                                    value='{{  isset($category) ? $category->color : "" }}'
-                                    data-colorpicker-id="1" data-original-title="" title="">
-                            </div>
 
                             <div class="form-group col-md-6">
                                 <label>Tipo <span class="text-danger">*</span></label>
@@ -56,7 +49,22 @@
                                         {{ __('category::attributes.categories.type.expense') }}
                                     </option>
                                 </select>
+                                <span class="error invalid-feedback">Preencha este
+                                    campo</span>
+                                <span class="success valid-feedback">Campo preenchido</span>
                             </div>
+
+                            <div class="form-group col-md-6">
+                                <label>Icone</label>
+                                <input type="text" name="icon" value='{{ isset($category) ? $category->icon : "" }}' class="form-control">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Cor</label>
+                                <input type="text" name="color" class="form-control my-colorpicker1 colorpicker-element"
+                                    value='{{  isset($category) ? $category->color : "" }}'
+                                    data-colorpicker-id="1" data-original-title="" title="">
+                            </div>
+
 
                             <div class="form-group col-6">
                                 <label>Categoria Pai</label>
@@ -86,7 +94,6 @@
                         <div class="tab-content">
                             @foreach ($languages as $key => $language)
                             <div class="tab-pane {{ $key == 0 ? "active" : '' }}" id="{{ $language }}">
-
                                 <div class="form-group">
                                     <label for="inputDisplayName">Nome em {{ strtoupper($language) }} <span
                                             class="text-danger">*</span></label>

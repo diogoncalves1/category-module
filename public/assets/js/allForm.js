@@ -2,9 +2,11 @@ const groups = document.querySelectorAll(".form-group");
 const btnSubmit = document.getElementById("btnSubmit");
 
 Array.from(groups).forEach((group) => {
-    let input = group.querySelector(".form-control");
+    let input = group.querySelector(".validate");
+
     let erroFeedback = group.querySelector(".invalid-feedback");
-    input.addEventListener("input", () => {
+
+    input?.addEventListener("input", () => {
         isInputValid(input, erroFeedback);
     });
 });
