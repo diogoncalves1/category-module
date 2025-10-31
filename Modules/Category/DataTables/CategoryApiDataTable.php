@@ -1,11 +1,11 @@
 <?php
 
-namespace Modules\FinancialGoal\DataTables;
+namespace Modules\Category\DataTables;
 
 use Modules\Category\Entities\Category;
 use Yajra\DataTables\Services\DataTable;
 
-class FinancialGoalDataTable extends DataTable
+class CategoryApiDataTable extends DataTable
 {
 
     public function dataTable($query)
@@ -16,15 +16,17 @@ class FinancialGoalDataTable extends DataTable
 
         return datatables()
             ->eloquent($query)
-            ->editColumn('type', fn($row) => __('category::attributes.categories.type.' . $row->status))
-            ->addColumn('parent', fn($row) => $row->parent)
-            ->addColumn('actions', function ($category) use ($user) {
+            ->editColumn('type', fn(Category $category) => __('category::attributes.categories.type.' . $category->type))
+            ->addColumn('parent', fn(Category $category) => $category->parent)
+            ->addColumn('actions', function (Category $category) use ($user) {
 
-                $canEdit = $category->default ? $user->can('editCategoryDefault') : $user->id == $category->id;
-                $canDestroy = $category->default ? $user->can('destroyCategoryDefault') : $user->id == $category->id;
+                $canEdit = $category->default ? $user->can('authorization', 'editCategoryDefault') : $user->id == $category->id;
+                $canDestroy = $category->default ? $user->can('authorization', 'destroyCategoryDefault') : $user->id == $category->id;
 
                 return ['edit' => $canEdit, 'destroy' => $canDestroy];
-            });
+            })
+            ->removeColumn('user_id')
+            ->removeColumn('parent_id');
     }
 
     public function query(Category $model)
@@ -34,7 +36,7 @@ class FinancialGoalDataTable extends DataTable
         $user = $request->user();
 
         return $model->newQuery()
-            ->userId('user_id', $user->id)
+            ->userId($user->id)
             ->orWhere('default', 1);
     }
 }

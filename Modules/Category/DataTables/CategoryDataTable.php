@@ -36,7 +36,7 @@ class CategoryDataTable extends DataTable
                 return "<p style='color: $category->color'><i class='nav-icon fas $category->icon'></i></p>";
             })
             ->addColumn('parent', function (Category $category) {
-                return $category->parent?->name;
+                return $category->parent?->name->{app()->getLocale()};
             })
             ->addColumn('action', function (Category $category) use ($canEditDefault, $canDestroyDefault) {
                 $btn = ' <div class="btn-group">';
@@ -51,7 +51,7 @@ class CategoryDataTable extends DataTable
                     $btn .= '<a title=\'Remover\'
                 data-toggle="tooltip" data-placement="top"
                 class="btn btn-times btn-default mr-1"
-                onclick="modalDelete(`' . route('api.categories.destroy', $category->id) . '`)">
+                onclick="modalDelete(`' . route('admin.categories.destroy', $category->id) . '`)">
                     <span class="m-l-5"><i class="fa fa-trash"></i></span></a>';
                 }
 
@@ -72,7 +72,7 @@ class CategoryDataTable extends DataTable
     {
         $query = $model->newQuery();
 
-        $query->where('default', 1);
+        $query->distinct()->where('default', 1);
 
         return $query;
     }
