@@ -25,29 +25,13 @@ class CategoryRequest extends FormRequest
             'type' => 'required|string|in:revenue,expense',
             'icon' => 'required|string|max:255',
             'parent_id' => 'nullable|exists:categories,id',
-            'user_id' => 'nullable|exists:users,id',
             'default' => 'nullable|boolean',
-            'name' => 'nullable|string|max:100'
         ];
 
+        $languages = config('languages');
 
-        $rules["name"] = ["nullable", function ($attribute, $value, $fail) {
-
-            if (!is_array($value) && !is_string($value))
-                return $fail('Array or String type required');
-
-            if (is_array($value)) {
-                foreach ($value as $lang => $translation) {
-                    if (!is_string($translation)) {
-                        return $fail("A tradução para {$lang} deve ser uma string.");
-                    }
-
-                    if (mb_strlen($translation) > 100) {
-                        return $fail("A tradução para {$lang} não pode ter mais que 100 caracteres.");
-                    }
-                }
-            }
-        }];
+        $rules['name'] = ['nullable', 'array'];
+        $rules['name.*'] = ['in:' . implode(',', $languages)];
 
         return $rules;
     }

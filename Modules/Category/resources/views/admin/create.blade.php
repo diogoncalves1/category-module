@@ -49,11 +49,11 @@
                                     <option value="">Escolha a Categoria</option>
                                     <option value="revenue"
                                         {{  isset($category) && $category->type == 'revenue' ? "selected" : '' }}>
-                                        {{ __('frontend.revenue') }}
+                                        {{ __('category::attributes.categories.type.revenue') }}
                                     </option>
                                     <option value="expense"
                                         {{  isset($category) && $category->type == 'expense' ? "selected" : '' }}>
-                                        {{ __('frontend.expense') }}
+                                        {{ __('category::attributes.categories.type.expense') }}
                                     </option>
                                 </select>
                             </div>
@@ -63,7 +63,7 @@
                                 <select name="parent_id" class="select2 form-control" style="width: 100%">
                                     <option value="">Selecione a Categoria</option>
                                     @foreach ($categories as $categoryParent)
-                                    <option value="{{ $categoryParent->id }}" {{ isset($category) && $category->parent_id == $categoryParent->id ? "selected" : '' }}>{{ $categoryParent->name }}</option>
+                                    <option value="{{ $categoryParent->id }}" {{ isset($category) && $category->parent_id == $categoryParent->id ? "selected" : '' }}>{{ $categoryParent->name->en }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -77,7 +77,7 @@
                         <ul class="nav nav-pills">
                             @foreach ($languages as $key => $language)
                             <li class="nav-item"><a class="nav-link {{ $key == 0 ? "active" : '' }}"
-                                    href="#{{ $language->name }}" data-toggle="tab">{{ $language->value; }}</a>
+                                    href="#{{ $language }}" data-toggle="tab">{{ strtoupper($language) }}</a>
                             </li>
                             @endforeach
                         </ul>
@@ -85,13 +85,13 @@
                     <div class="card-body">
                         <div class="tab-content">
                             @foreach ($languages as $key => $language)
-                            <div class="tab-pane {{ $key == 0 ? "active" : '' }}" id="{{ $language->name }}">
+                            <div class="tab-pane {{ $key == 0 ? "active" : '' }}" id="{{ $language }}">
 
                                 <div class="form-group">
-                                    <label for="inputDisplayName">Nome em {{ $language->value }} <span
+                                    <label for="inputDisplayName">Nome em {{ strtoupper($language) }} <span
                                             class="text-danger">*</span></label>
-                                    <input type="text" name="name[{{ $language->name }}]"
-                                        value="{{ isset($category->name) ? json_decode($category->name)->{$language->name} : "" }}"
+                                    <input type="text" name="name[{{ $language }}]"
+                                        value="{{ isset($category->name) ? $category->name->{$language} ?? '' : '' }}"
                                         class="validate form-control">
                                     <span class="error invalid-feedback">Preencha este
                                         campo</span>

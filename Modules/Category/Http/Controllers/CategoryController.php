@@ -3,7 +3,8 @@
 namespace Modules\Category\Http\Controllers;
 
 use App\Http\Controllers\AppController;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Support\Facades\Auth;
 use Modules\Category\Repositories\CategoryRepository;
 
 class CategoryController extends AppController
@@ -15,29 +16,36 @@ class CategoryController extends AppController
         $this->categoryRepository = $categoryRepository;
     }
 
-    public function index()
+    /**
+     * Display a listing of the resource.
+     * @return Renderable
+     */
+    public function index(): Renderable
     {
-        Session::flash('page', 'categories');
-
         return view('category::frontend.categories.index');
     }
 
-    public function create()
+    /**
+     * Show the form for creating a new resource.
+     * @return Renderable
+     */
+    public function create(): Renderable
     {
-        Session::flash('page', 'categories');
-
-        $categories = $this->categoryRepository->allUser();
+        $categories = $this->categoryRepository->allUser(Auth::user());
 
         return view('category::frontend.categories.form', compact('categories'));
     }
 
-    public function edit(string $id)
+    /**
+     * Show the form for editing the specified resource.
+     * @param string $id
+     * @return Renderable
+     */
+    public function edit(string $id): Renderable
     {
-        Session::flash('page', 'categories');
-
         $category = $this->categoryRepository->show($id);
 
-        $categories = $this->categoryRepository->allUser();
+        $categories = $this->categoryRepository->allUser(Auth::user());
 
         return view('category::frontend.categories.form', compact('category', 'categories'));
     }
