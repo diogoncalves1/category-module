@@ -4,7 +4,7 @@ namespace Modules\Category\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CategoryGuestRequest extends FormRequest
+class UpdateCategoryGuestRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -12,7 +12,6 @@ class CategoryGuestRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => 'required|string|in:revenue,expense',
             'name' => 'required|string|max:255',
             'icon' => 'nullable|string|max:255',
             'color' => 'nullable|string',

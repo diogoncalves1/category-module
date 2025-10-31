@@ -3,7 +3,7 @@
 namespace Modules\Category\Repositories;
 
 use App\Http\Controllers\ApiController;
-use App\Repositories\RepositoryInterface;
+use App\Repositories\RepositoryApiInterface;
 use Illuminate\Auth\Access\AuthorizationException;
 use Modules\Category\Exceptions\CannotDeleteDefaultCategoryException;
 use Modules\Category\Exceptions\CannotDeleteOthersCategoryException;
@@ -15,9 +15,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\Category\Entities\Category;
+use Modules\Category\Exceptions\DefaultCategoryNameTranslationRequiredException;
 use Modules\User\Entities\User;
 
-class CategoryRepository extends ApiController implements RepositoryInterface
+class CategoryRepository extends ApiController implements RepositoryApiInterface
 {
     public function all()
     {
@@ -57,8 +58,7 @@ class CategoryRepository extends ApiController implements RepositoryInterface
             if (!$request->get('default')) {
                 $input['user_id'] = $user->id;
             } else {
-                if (!$user || !$user->can('createDefaultCategory'))
-                    throw new UnauthorizedDefaultCategoryException();
+                if (!$user || !$user->can('authorization', 'createCategoryDefault')) throw new UnauthorizedDefaultCategoryException();
                 $input['default'] = 1;
             }
 
@@ -71,57 +71,40 @@ class CategoryRepository extends ApiController implements RepositoryInterface
 
     public function update(Request $request, string $id)
     {
-        try {
-            return DB::transaction(function () use ($request, $id) {
-                $category = $this->show($id);
+        return DB::transaction(function () use ($request, $id) {
+            $category = $this->show($id);
 
-                $input = $request->only(['type', 'icon', 'color', 'parent_id']);
+            $input = $request->only(['type', 'icon', 'color', 'parent_id']);
 
-                $input["name"] = json_encode($request->get('name'));
+            if ($category->default && !is_array($request->get('name'))) throw new DefaultCategoryNameTranslationRequiredException();
 
-                $user = Auth::user();
+            $input["name"] = $request->get('name');
 
-                if (!$user || !$category->default  && $category->user_id != $user->id)
-                    throw new CannotUpdateOthersCategoryException();
+            $user = Auth::user() !== null ? Auth::user() : $request->user();
 
-                if ($category->default && !$user->can('updateDefaultCategory'))
-                    throw new CannotUpdateDefaultCategoryException();
+            if (!$user || !$category->default  && $category->user_id != $user->id) throw new CannotUpdateOthersCategoryException();
+            if ($category->default && !$user->can('authorization', 'editCategoryDefault')) throw new CannotUpdateDefaultCategoryException();
 
-                $category->update($input);
+            $category->update($input);
 
-                return response()->json(['success' => true, 'message' => __('alerts.categoryUpdated')]);
-            });
-        } catch (\Exception $e) {
-            Log::error($e);
-            if ($e->getCode())
-                return response()->json(['error' => true, "message" => $e->getMessage()], $e->getCode());
-            return response()->json(['error' => true, 'message' => __('alerts.errorUpdateCategory')], 500);
-        }
+            return $category;
+        });
     }
 
-    public function destroy(string $id)
+    public function destroy(string $id, ?Request $request = null)
     {
-        try {
-            return DB::transaction(function () use ($id) {
-                $category = $this->show($id);
+        return DB::transaction(function () use ($id, $request) {
+            $category = $this->show($id);
 
-                $user = Auth::user();
+            $user = Auth::user() !== null ? Auth::user() : $request->user();
 
-                if (!$user || !$category->default  && $category->user_id != $user->id)
-                    throw new CannotDeleteOthersCategoryException();
-                if ($category->default && !$user->can('destroyDefaultCategory'))
-                    throw new CannotDeleteDefaultCategoryException();
+            if (!$user || !$category->default  && $category->user_id != $user->id) throw new CannotDeleteOthersCategoryException();
+            if ($category->default && !$user->can('authorization', 'destroyCategoryDefault')) throw new CannotDeleteDefaultCategoryException();
 
-                $category->delete();
+            $category->delete();
 
-                return response()->json(["success" => true, "message" => __('alerts.categoryDeleted')]);
-            });
-        } catch (\Exception $e) {
-            Log::error($e);
-            if ($e->getCode())
-                return response()->json(['error' => true, "message" => $e->getMessage()], $e->getCode());
-            return response()->json(["success" => true, "message" => __('alerts.errorDeleteCategory')], 500);
-        }
+            return $category;
+        });
     }
 
     public function show(string $id)

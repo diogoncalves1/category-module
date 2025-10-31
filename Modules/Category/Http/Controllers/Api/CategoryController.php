@@ -6,8 +6,9 @@ use App\Http\Controllers\ApiController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Modules\Category\DataTables\CategoryDataTable;
+use Modules\Category\DataTables\CategoryApiDataTable;
 use Modules\Category\Http\Requests\CategoryGuestRequest;
+use Modules\Category\Http\Requests\UpdateCategoryGuestRequest;
 use Modules\Category\Http\Resources\CategoryResource;
 use Modules\Category\Repositories\CategoryRepository;
 
@@ -22,10 +23,10 @@ class CategoryController extends ApiController
 
     /**
      * Display a listing of the resource.
-     * @param CategoryDataTable $dataTable
+     * @param CategoryApiDataTable $dataTable
      * @return JsonResponse
      */
-    public function index(CategoryDataTable $dataTable): JsonResponse
+    public function index(CategoryApiDataTable $dataTable): JsonResponse
     {
         try {
             return $dataTable->ajax();
@@ -44,10 +45,10 @@ class CategoryController extends ApiController
         try {
             $category = $this->repository->store($request);
 
-            return $this->ok(new CategoryResource($category), __('category::messages.categories.store', $category->name));
+            return $this->ok(new CategoryResource($category), __('category::messages.categories.store', ['name' => $category->name]));
         } catch (\Exception $e) {
             Log::error($e);
-            return $this->fail($e->getMessage(), $e, $e->getCode());
+            return $this->fail($e->getMessage() ?? __('category::messages.categories.errors.store'), $e, $e->getCode());
         }
     }
 
@@ -57,7 +58,7 @@ class CategoryController extends ApiController
      * @param string $id
      * @return JsonResponse
      */
-    public function show(Request $request, string $id)
+    public function show(Request $request, string $id): JsonResponse
     {
         try {
             $category = $this->repository->showUser($request, $id);
@@ -69,17 +70,38 @@ class CategoryController extends ApiController
         }
     }
 
-    public function update(Request $request, string $id): JsonResponse
+    /**
+     * Update the specified resource in storage.
+     * @param UpdateCategoryGuestRequest $request
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function update(UpdateCategoryGuestRequest $request, string $id): JsonResponse
     {
-        $response = $this->repository->update($request, $id);
+        try {
+            $category = $this->repository->update($request, $id);
 
-        return $response;
+            return $this->ok(new CategoryResource($category), __('category::messages.categories.update', ['name' => $category->name]));
+        } catch (\Exception $e) {
+            Log::error($e);
+            return $this->fail($e->getMessage() ?? __('category::messages.categories.errors.update'), $e, $e->getCode());
+        }
     }
 
-    public function destroy(string $id): JsonResponse
+    /**
+     * Remove the specified resource from storage.
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function destroy(Request $request, string $id): JsonResponse
     {
-        $response = $this->repository->destroy($id);
+        try {
+            $category = $this->repository->destroy($id, $request);
 
-        return $response;
+            return $this->ok(message: __('category::messages.categories.destroy', ['name' => $category->name]));
+        } catch (\Exception $e) {
+            Log::error($e);
+            return $this->fail($e->getMessage() ?? __('category::messages.categories.errors.destroy'), $e, $e->getCode());
+        }
     }
 }

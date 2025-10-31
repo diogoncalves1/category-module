@@ -23,15 +23,19 @@ class CategoryRequest extends FormRequest
     {
         $rules = [
             'type' => 'required|string|in:revenue,expense',
-            'icon' => 'required|string|max:255',
+            'icon' => 'nullable|string|max:255',
             'parent_id' => 'nullable|exists:categories,id',
             'default' => 'nullable|boolean',
         ];
 
         $languages = config('languages');
 
-        $rules['name'] = ['nullable', 'array'];
-        $rules['name.*'] = ['in:' . implode(',', $languages)];
+        $rules['name'] = ['required', 'array'];
+
+        foreach ($languages as $language) {
+            $rules['name.' . $language] = "required|string|max:100";
+            $rules['name.' . $language] = "required|string|max:100";
+        }
 
         return $rules;
     }

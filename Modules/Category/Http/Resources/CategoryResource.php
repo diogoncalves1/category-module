@@ -15,7 +15,7 @@ class CategoryResource extends JsonResource
         $userLang = app()->getLocale();
 
         return [
-            'name' => $this->default ? $this->name->$userLang : $this->name->name,
+            'name' => $this->default ? $this->name->{$userLang} : $this->name,
             'type' => __('category::attributes.categories.type.' . $this->type),
             'icon' => $this->icon,
             'color' => $this->color,

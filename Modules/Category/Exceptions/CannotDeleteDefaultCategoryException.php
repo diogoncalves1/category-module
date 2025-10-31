@@ -6,8 +6,11 @@ use Exception;
 
 class CannotDeleteDefaultCategoryException extends Exception
 {
+    protected $code = 403;
+    protected $message;
+
     public function __construct()
     {
-        parent::__construct(__('alerts.cannotDeleteDefaultCategoryException'), 403);
+        parent::__construct(__('category::exceptions.categories.cannotDeleteDefaultCategoryException'), $this->code);
     }
 }

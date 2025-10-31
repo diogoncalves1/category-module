@@ -9,8 +9,6 @@ Route::group(
         'middleware' => 'auth'
     ],
     function () {
-        Route::resource('categories', \Modules\Category\Http\Controllers\Admin\CategoryController::class, ['except' => ['update', 'show', 'destroy', 'store']]);
+        Route::resource('categories', \Modules\Category\Http\Controllers\Admin\CategoryController::class, ['except' => ['show']]);
     }
 );
-
-Route::resource('categories', \Modules\Category\Http\Controllers\CategoryController::class, ['except' => ['update', 'show', 'destroy', 'store']]);
