@@ -1,11 +1,18 @@
 <?php
-
 namespace Modules\Category\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Modules\Language\Repositories\LanguageRepository;
 
 class CategoryRequest extends FormRequest
 {
+    protected LanguageRepository $languageRepository;
+
+    public function __construct(LanguageRepository $languageRepository)
+    {
+        $this->languageRepository = $languageRepository;
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -22,13 +29,13 @@ class CategoryRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'type' => 'required|string|in:revenue,expense',
-            'icon' => 'nullable|string|max:255',
+            'type'      => 'required|string|in:revenue,expense',
+            'icon'      => 'nullable|string|max:255',
             'parent_id' => 'nullable|exists:categories,id',
-            'default' => 'nullable|boolean',
+            'default'   => 'nullable|boolean',
         ];
 
-        $languages = config('languages');
+        $languages = $this->languageRepository->allCodes();
 
         $rules['name'] = ['required', 'array'];
 

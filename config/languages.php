@@ -1,6 +1,0 @@
-<?php
-
-return [
-    'pt',
-    'en'
-];
