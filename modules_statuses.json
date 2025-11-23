@@ -1,6 +1,7 @@
 {
     "ApiResponser": true,
     "Category": true,
+    "Language": true,
     "Permission": true,
     "User": true,
     "UserPreferences": true
