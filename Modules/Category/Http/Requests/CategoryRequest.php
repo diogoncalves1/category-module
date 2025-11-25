@@ -2,6 +2,7 @@
 namespace Modules\Category\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Modules\Language\Repositories\LanguageRepository;
 
 class CategoryRequest extends FormRequest
@@ -29,11 +30,17 @@ class CategoryRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'type'      => 'required|string|in:revenue,expense',
-            'icon'      => 'nullable|string|max:255',
-            'parent_id' => 'nullable|exists:categories,id',
-            'default'   => 'nullable|boolean',
+            'type'       => 'required|string|in:revenue,expense',
+            'icon'       => 'nullable|string|max:255',
+            'parent_id'  => 'nullable|exists:categories,id',
+            'is_default' => 'nullable|boolean',
         ];
+
+        if ($this->get('category_id')) {
+            $rules['code'] = ['required', 'string', Rule::unique('categories', 'code')->ignore($this->get('category_id'))];
+        } else {
+            $rules['code'] = 'required|string|unique:categories,code';
+        }
 
         $languages = $this->languageRepository->allCodes();
 

@@ -3,7 +3,7 @@
 @section('title', (isset($category) ? 'Editar' : 'Adicionar') . ' Categoria')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item active"><a class="text-white" href="{{ route('admin.categories.index') }}">Categorias</a>
+    <li class="breadcrumb-item active"><a class="text-dark" href="{{ route('admin.categories.index') }}">Categorias</a>
     </li>
     <li class="breadcrumb-item active">{{ isset($category) ? 'Editar' : 'Adicionar' }}</li>
 @endsection
@@ -26,7 +26,6 @@
             @else
                 @method('POST')
             @endif
-            <input type="hidden" name="default" value="1">
             <div class="row">
                 <div class="col-12">
                     <div class="card card-primary">
@@ -35,13 +34,13 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <input type="hidden" name="default" value="1">
+                                <input type="hidden" name="is_default" value="1">
 
                                 <div class="form-group col-md-6">
                                     <label>Tipo <span class="text-danger">*</span></label>
                                     <select name="type" class="select2 validate form-control" style="width: 100%"
                                         required>
-                                        <option value="">Escolha a Categoria</option>
+                                        <option value="">Escolha o tipo</option>
                                         <option value="revenue"
                                             {{ isset($category) && $category->type == 'revenue' ? 'selected' : '' }}>
                                             {{ __('category::attributes.categories.type.revenue') }}
@@ -61,6 +60,7 @@
                                     <input type="text" name="icon"
                                         value='{{ isset($category) ? $category->icon : '' }}' class="form-control">
                                 </div>
+
                                 <div class="form-group col-md-6">
                                     <label>Cor</label>
                                     <input type="text" name="color"
@@ -69,8 +69,13 @@
                                         data-original-title="" title="">
                                 </div>
 
+                                <div class="form-group col-md-6">
+                                    <label>Código</label>
+                                    <input type="text" name="code"
+                                        value='{{ isset($category) ? $category->code : '' }}' class="form-control">
+                                </div>
 
-                                <div class="form-group col-6">
+                                <div class="form-group col-12">
                                     <label>Categoria Pai</label>
                                     <select name="parent_id" class="select2 form-control" style="width: 100%">
                                         <option value="">Selecione a Categoria</option>
