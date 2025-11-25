@@ -18,7 +18,7 @@ class CategoryResource extends JsonResource
 
         return [
             'id'             => $this->id,
-            'name'           => $this->default ? $this->name->{$lang} : $this->name,
+            'name'           => $this->is_default ? $this->name->{$lang} : $this->name,
             'typeTranslated' => __('category::attributes.categories.type.' . $this->type),
             'type'           => $this->type,
             'icon'           => $this->icon,
