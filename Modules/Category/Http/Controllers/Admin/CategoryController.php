@@ -5,6 +5,7 @@ use App\Http\Controllers\ApiController;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Modules\Category\DataTables\CategoryDataTable;
@@ -103,14 +104,15 @@ class CategoryController extends ApiController
     /**
      * Remove the specified resource from storage.
      * @param string $id
+     * @param Request $request
      * @return JsonResponse
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(Request $request, string $id): JsonResponse
     {
         try {
             $this->allowedAction('destroyCategoryDefault');
 
-            $category = $this->repository->destroy($id);
+            $category = $this->repository->destroy($request, $id);
 
             return $this->ok(message: __('category::messages.categories.destroy', ['name' => $category->name->{app()->getLocale()}]));
         } catch (\Exception $e) {
